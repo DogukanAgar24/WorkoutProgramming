@@ -9,5 +9,13 @@ namespace WorkoutControlling.Core.Entities
 		public string Email { get; set; }
 		public int PhoneNumber { get; set; }
 		public DateTime RegistrationDate { get; set; } = DateTime.Now;
+
+		protected Person(int id, string fullName, string email, int phoneNumber)
+		{
+			Id = id;
+			FullName = fullName;
+			Email = email;
+			PhoneNumber = phoneNumber;
+		}
 	}
 }

@@ -2,10 +2,14 @@ using WorkoutControlling.Core.Enums;
 
 namespace WorkoutControlling.Core.Entities
 {
-	public class Exercises
+	public class Exercises : BaseExercise
 	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public MuscleGroup PrimaryMuscle { get; set; }
+
+		public Exercises(int id, string name, MuscleGroup primaryMuscle) : base(id, name, primaryMuscle)
+		{
+			Id = id;
+			Name = name;
+			PrimaryMuscle = primaryMuscle;
+		}
 	}
 }
