@@ -7,7 +7,8 @@ namespace WorkoutControlling.Core.Interfaces
 		int Id { get; set; }
 		string FullName { get; set; }
 		string Email { get; set; }
-		int PhoneNumber { get; set; }
+		long PhoneNumber { get; set; }
+
 
 	}
 }
