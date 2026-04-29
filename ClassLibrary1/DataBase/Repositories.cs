@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Data.Sqlite;
+using WorkoutControlling.Core.Interfaces;
+using WorkoutProgramming.Core.Entities;
 
 namespace WorkoutControlling.DataBase
 {
-	public class Repositories
+	public class Repositories : IRepository<WorkoutInfo>
 	{
 		private readonly string _dbPath= "workoutControlling.db";
 
@@ -13,6 +15,8 @@ namespace WorkoutControlling.DataBase
 		{
 			InitializeDataBase();
 		}
+
+		
 
 		private void InitializeDataBase()
 		{
@@ -31,4 +35,28 @@ namespace WorkoutControlling.DataBase
 			createTableCommand.ExecuteNonQuery();
 		}
 	}
+		public void Add(WorkoutInfo entity)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Delete(WorkoutInfo entity)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<WorkoutInfo> GetAll()
+		{
+			throw new NotImplementedException();
+		}
+
+		public WorkoutInfo GetById(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Update(WorkoutInfo entity)
+		{
+			throw new NotImplementedException();
+		}
 }
