@@ -19,10 +19,12 @@ namespace WorkoutControlling.DataBase
 			using var connection = new SqliteConnection($"Data Source={_dbPath}");
 			connection.Open();
 
-			string createExercisesTable=@"CREATE TABLE IF NOT EXISTS Exercises (
+			string createExercisesTable= @"CREATE TABLE IF NOT EXISTS Exercises (
 										Id INTEGER PRIMARY KEY AUTOINCREMENT,
 										Name TEXT NOT NULL,
-										PrimaryMuscle TEXT NOT NULL
+										PrimaryMuscle TEXT NOT NULL,
+										SetNumber INTEGER NOT NULL,
+										Repetation INTEGER NOT NULL
 									);";
 
 			using var createTableCommand = new SqliteCommand(createExercisesTable, connection);
