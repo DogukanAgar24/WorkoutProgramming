@@ -7,7 +7,7 @@ namespace WorkoutControlling.Core.Interfaces
 {
 	public interface IBaseExercise
 	{
-		public int Id { get; set; }
+		int Id { get; set; }
 		string Name { get; set; }
 		MuscleGroup PrimaryMuscle { get; set; }
 	}

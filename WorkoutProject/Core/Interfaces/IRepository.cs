@@ -6,7 +6,7 @@ namespace WorkoutControlling.Core.Interfaces
 		IEnumerable<T> GetAll();
 		void Add(T entity);
 		void Update(T entity);
-		void DeleteLastRecord();
+		void Delete(T entity);
 
 	}
 }

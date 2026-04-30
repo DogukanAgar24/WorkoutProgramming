@@ -24,7 +24,7 @@ namespace WorkoutControlling.DataBase
 		{
 			using var connection = new SqliteConnection($"Data Source={_dbPath}");
 			connection.Open();
-			
+
 			string createExercisesTable = @"CREATE TABLE IF NOT EXISTS Exercises (
 										Id INTEGER PRIMARY KEY AUTOINCREMENT,
 										Name TEXT NOT NULL,
@@ -50,30 +50,36 @@ namespace WorkoutControlling.DataBase
 				VALUES ($name,$muscle,$set,$rep)";
 
 				insertCommand.Parameters.AddWithValue("$name", exercise.Name);
-				insertCommand.Parameters.AddWithValue("muscle", exercise.PrimaryMuscle.ToString());
+				insertCommand.Parameters.AddWithValue("muscle", exercise.PrimaryMuscle);
 				insertCommand.Parameters.AddWithValue("set", exercise.SetNumber);
 				insertCommand.Parameters.AddWithValue("rep", exercise.RepetationNumber);
 
 				insertCommand.ExecuteNonQuery();
 			}
-			Console.WriteLine("Added successfully! \a");
 
 
 		}
 
-		public void DeleteLastRecord()
+		public void Delete(int id)
 		{
-			var connectionString = $"Data Source ={_dbPath}";
+			string connectionString=$"DataSource={_dbPath}";
 			using (var connection = new SqliteConnection(connectionString))
 			{
 				connection.Open();
-				var command = connection.CreateCommand();
-				// ID'si en büyük olan (yani en son eklenen) satırı bul ve sil
-				command.CommandText = "DELETE FROM Exercises WHERE Id = (SELECT MAX(Id) FROM Exercises)";
 
-				command.ExecuteNonQuery();
+				var deleteCommand = connection.CreateCommand();
+
+				deleteCommand.CommandText = "DELETE FROM Exercises WHERE Id= $id";
+				deleteCommand.Parameters.AddWithValue("$id", id);
+
+				deleteCommand.ExecuteNonQuery();
+
+				Console.WriteLine("Record has deleted.");
 			}
-			Console.WriteLine("Deleted successfully! \a");
+		}
+		public void Delete(WorkoutInfo exercise)
+		{
+			Delete(exercise.Id);
 		}
 
 		public IEnumerable<WorkoutInfo> GetAll()
@@ -90,7 +96,5 @@ namespace WorkoutControlling.DataBase
 		{
 			throw new NotImplementedException();
 		}
-
-		
 	}
 }
