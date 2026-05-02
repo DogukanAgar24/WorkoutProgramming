@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using WorkoutControlling.Core.Entities;
+using WorkoutControlling.Core.Enums;
 using WorkoutControlling.Core.Interfaces;
 
 
@@ -73,12 +74,105 @@ namespace WorkoutControlling.DataBase
 
 				command.ExecuteNonQuery();
 			}
-			Console.WriteLine("Deleted successfully! \a");
+			Console.WriteLine("Delete the last record is successfully! \a");
+		}
+		public void DeleteById(int id)
+		{
+			var connectionString = $"Data Source ={_dbPath}";
+			using (var connection = new SqliteConnection(connectionString))
+			{
+				connection.Open();
+				var command = connection.CreateCommand();
+				command.CommandText = "DELETE FROM Exercises Where Id =@id";
+
+				command.ExecuteNonQuery();
+			}
+			Console.WriteLine("Delete by Id is successfully! \a");
+		}
+		public void DeleteByName(string name)
+		{
+			var connectionString = $"Data Source ={_dbPath}";
+			using (var connection = new SqliteConnection(connectionString))
+			{
+				connection.Open();
+				var command = connection.CreateCommand();
+				command.CommandText = "DELETE FROM Exercises Where Name =@name";
+
+				command.ExecuteNonQuery();
+			}
+			Console.WriteLine("Delete by name is successfully! \a");
+		}
+
+		public void DeleteAll()
+		{
+			string connectionString = $"Data Source={_dbPath}";
+
+			using (var connection = new SqliteConnection(connectionString))
+			{
+				connection.Open();
+				using (var transaction = connection.BeginTransaction())
+				{
+					try
+					{
+						var command = connection.CreateCommand();
+						command.Transaction = transaction;
+
+						// 1. ADIM: Tablodaki tüm verileri siler
+						command.CommandText = "DELETE FROM Exercises;";
+						command.ExecuteNonQuery();
+
+						// 2. ADIM: SQLite'ın iç sayacını sıfırlar (ID'lerin tekrar 1'den başlaması için)
+						// Eğer bu komutu yazmazsan, yeni eklediğin kayıt eski ID'den devam eder.
+						command.CommandText = "DELETE FROM sqlite_sequence WHERE name = 'Exercises';";
+						command.ExecuteNonQuery();
+
+						// Her şey yolundaysa işlemi onayla
+						transaction.Commit();
+
+						Console.WriteLine("All records are deleted and ID will starts from zero.");
+					}
+					catch (System.Exception ex)
+					{
+						// Bir hata olursa işlemleri geri al
+						transaction.Rollback();
+						Console.WriteLine("Hata oluştu: " + ex.Message);
+					}
+				}
+			}
 		}
 
 		public IEnumerable<WorkoutInfo> GetAll()
 		{
-			throw new NotImplementedException();
+			var workoutList = new List<WorkoutInfo>();
+			string connectionString = $"Data Source ={_dbPath}";
+			int counter = 1;
+
+			using (var connection = new SqliteConnection(connectionString))
+			{
+				connection.Open();
+				var command = connection.CreateCommand();
+				command.CommandText = "SELECT Id, Name, PrimaryMuscle, SetNumber, Repetation FROM Exercises";
+
+				using (var reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						var workout = new WorkoutInfo
+						{
+							Id = reader.GetInt32(0),
+							DisplayId =counter++,
+							Name = reader.GetString(1),
+							PrimaryMuscle = Enum.Parse<MuscleGroup>(reader.GetString(2)),
+							SetNumber = reader.GetInt32(3),
+							RepetationNumber = reader.GetInt32(4)
+
+						};
+
+						workoutList.Add(workout);
+					}
+				}
+			}
+			return workoutList;
 		}
 
 		public WorkoutInfo GetById(int id)

@@ -11,10 +11,15 @@ namespace WorkoutControlling.Core.Entities
 
 		public MuscleGroup PrimaryMuscle { get; set; }
 
-		protected BaseExercise(string name, MuscleGroup primaryMuscle)
+		protected BaseExercise(int id,string name, MuscleGroup primaryMuscle)
 		{
+			Id = id;
 			Name = name;
 			PrimaryMuscle = primaryMuscle;
+		}
+		protected BaseExercise()
+		{
+			
 		}
 	}
 

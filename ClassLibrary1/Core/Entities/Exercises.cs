@@ -5,7 +5,7 @@ namespace WorkoutControlling.Core.Entities
 	public class Exercises : BaseExercise
 	{
 
-		public Exercises( string name, MuscleGroup primaryMuscle) : base( name, primaryMuscle)
+		public Exercises(int id,string name, MuscleGroup primaryMuscle) : base( id,name, primaryMuscle)
 		{
 			Name = name;
 			PrimaryMuscle = primaryMuscle;
