@@ -57,8 +57,6 @@ namespace WorkoutControlling.DataBase
 
 				insertCommand.ExecuteNonQuery();
 			}
-			Console.WriteLine("Added successfully! \a");
-
 
 		}
 
@@ -71,10 +69,8 @@ namespace WorkoutControlling.DataBase
 				var command = connection.CreateCommand();
 				// ID'si en büyük olan (yani en son eklenen) satırı bul ve sil
 				command.CommandText = "DELETE FROM Exercises WHERE Id = (SELECT MAX(Id) FROM Exercises)";
-
 				command.ExecuteNonQuery();
 			}
-			Console.WriteLine("Delete the last record is successfully! \a");
 		}
 		public void DeleteById(int id)
 		{
@@ -84,6 +80,7 @@ namespace WorkoutControlling.DataBase
 				connection.Open();
 				var command = connection.CreateCommand();
 				command.CommandText = "DELETE FROM Exercises Where Id =@id";
+				command.Parameters.AddWithValue("@id", id);
 
 				command.ExecuteNonQuery();
 			}
@@ -100,7 +97,7 @@ namespace WorkoutControlling.DataBase
 
 				command.ExecuteNonQuery();
 			}
-			Console.WriteLine("Delete by name is successfully! \a");
+			
 		}
 
 		public void DeleteAll()
@@ -129,13 +126,11 @@ namespace WorkoutControlling.DataBase
 						// Her şey yolundaysa işlemi onayla
 						transaction.Commit();
 
-						Console.WriteLine("All records are deleted and ID will starts from zero.");
 					}
 					catch (System.Exception ex)
 					{
 						// Bir hata olursa işlemleri geri al
 						transaction.Rollback();
-						Console.WriteLine("Hata oluştu: " + ex.Message);
 					}
 				}
 			}
@@ -175,14 +170,10 @@ namespace WorkoutControlling.DataBase
 			return workoutList;
 		}
 
-		public WorkoutInfo GetById(int id)
-		{
-			throw new NotImplementedException();
-		}
 
-		public void Update(WorkoutInfo entity)
+		public void Update(WorkoutInfo before,WorkoutInfo after)
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		
