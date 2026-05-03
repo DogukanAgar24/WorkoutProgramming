@@ -10,10 +10,12 @@ namespace WorkoutControlling.Core.Entities
 		public int DisplayId { get; set; }
 		public int SetNumber { get; set; }
 		public int RepetationNumber { get; set; }
+		public int ExerciseWeight { get; set; }
 
-		public WorkoutInfo(int id,int displayId,string name, int setNumber, int repetationNumber,MuscleGroup primaryMuscle) : 
+		public WorkoutInfo(int id,int displayId,string name, int setNumber, int repetationNumber,int exerciseweight,MuscleGroup primaryMuscle) : 
 			base(id,name,primaryMuscle)
 		{
+			ExerciseWeight = exerciseweight;
 			DisplayId = displayId;
 			SetNumber = setNumber;
 			RepetationNumber = repetationNumber;

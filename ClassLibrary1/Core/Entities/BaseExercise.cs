@@ -19,7 +19,7 @@ namespace WorkoutControlling.Core.Entities
 		}
 		protected BaseExercise()
 		{
-			
+
 		}
 	}
 

@@ -38,6 +38,25 @@ namespace WorkoutControlling.DataBase
 			createTableCommand.ExecuteNonQuery();
 		}
 
+		public void EnsureWeightColumnExists()
+		{
+			using var connection = new SqliteConnection($"Data Source={_dbPath}");
+			connection.Open();
+			var command = connection.CreateCommand();
+
+			// Eğer Weight sütunu yoksa ekle komutu
+			command.CommandText = "ALTER TABLE Exercises ADD COLUMN ExerciseWeight REAL DEFAULT 0;";
+
+			try
+			{
+				command.ExecuteNonQuery();
+			}
+			catch
+			{
+
+			}
+		}
+
 		public void Add(WorkoutInfo exercise)
 		{
 			string connectionString = $"Data Source={_dbPath}";
@@ -47,14 +66,14 @@ namespace WorkoutControlling.DataBase
 
 				var insertCommand = connection.CreateCommand();
 				insertCommand.CommandText =
-					@"INSERT INTO Exercises (Name,PrimaryMuscle,SetNumber,Repetation)
-				VALUES ($name,$muscle,$set,$rep)";
+					@"INSERT INTO Exercises (Name,PrimaryMuscle,SetNumber,Repetation,ExerciseWeight)
+				VALUES ($name,$muscle,$set,$rep,$exWeight)";
 
 				insertCommand.Parameters.AddWithValue("$name", exercise.Name);
-				insertCommand.Parameters.AddWithValue("muscle", exercise.PrimaryMuscle.ToString());
-				insertCommand.Parameters.AddWithValue("set", exercise.SetNumber);
-				insertCommand.Parameters.AddWithValue("rep", exercise.RepetationNumber);
-
+				insertCommand.Parameters.AddWithValue("$muscle", exercise.PrimaryMuscle.ToString());
+				insertCommand.Parameters.AddWithValue("$set", exercise.SetNumber);
+				insertCommand.Parameters.AddWithValue("$rep", exercise.RepetationNumber);
+				insertCommand.Parameters.AddWithValue("$exWeight", exercise.ExerciseWeight);
 				insertCommand.ExecuteNonQuery();
 			}
 
@@ -94,7 +113,7 @@ namespace WorkoutControlling.DataBase
 				connection.Open();
 				var command = connection.CreateCommand();
 				command.CommandText = "DELETE FROM Exercises Where Name =@name";
-
+				command.Parameters.AddWithValue("@name", name);
 				command.ExecuteNonQuery();
 			}
 			
@@ -127,10 +146,12 @@ namespace WorkoutControlling.DataBase
 						transaction.Commit();
 
 					}
-					catch (System.Exception ex)
+					catch (System.Exception)
 					{
 						// Bir hata olursa işlemleri geri al
 						transaction.Rollback();
+
+
 					}
 				}
 			}
@@ -146,7 +167,7 @@ namespace WorkoutControlling.DataBase
 			{
 				connection.Open();
 				var command = connection.CreateCommand();
-				command.CommandText = "SELECT Id, Name, PrimaryMuscle, SetNumber, Repetation FROM Exercises";
+				command.CommandText = "SELECT Id, Name, PrimaryMuscle, SetNumber, Repetation, ExerciseWeight FROM Exercises";
 
 				using (var reader = command.ExecuteReader())
 				{
@@ -155,11 +176,12 @@ namespace WorkoutControlling.DataBase
 						var workout = new WorkoutInfo
 						{
 							Id = reader.GetInt32(0),
-							DisplayId =counter++,
+							DisplayId = counter++,
 							Name = reader.GetString(1),
 							PrimaryMuscle = Enum.Parse<MuscleGroup>(reader.GetString(2)),
 							SetNumber = reader.GetInt32(3),
-							RepetationNumber = reader.GetInt32(4)
+							RepetationNumber = reader.GetInt32(4),
+							ExerciseWeight = reader.GetInt32(5)
 
 						};
 
@@ -171,11 +193,31 @@ namespace WorkoutControlling.DataBase
 		}
 
 
-		public void Update(WorkoutInfo before,WorkoutInfo after)
+		public void Update(WorkoutInfo before, WorkoutInfo after)
 		{
-			
-		}
+			using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
+			{
+				connection.Open();
+				var command = connection.CreateCommand();
+				// Güncelleme sorgusu
+				command.CommandText = @"UPDATE Exercises 
+                                SET Name = $name, 
+                                    PrimaryMuscle = $muscle, 
+                                    SetNumber = $set, 
+                                    Repetation = $rep,
+									ExerciseWeight = $exWeight
+                                WHERE Id = $id";
 
-		
+				// Parametreleri 'after' nesnesinden alıyoruz, 'before.Id' ile hedefi belirliyoruz
+				command.Parameters.AddWithValue("$name", after.Name);
+				command.Parameters.AddWithValue("$muscle", after.PrimaryMuscle.ToString());
+				command.Parameters.AddWithValue("$set", after.SetNumber);
+				command.Parameters.AddWithValue("$rep", after.RepetationNumber);
+				command.Parameters.AddWithValue("$id", before.Id);
+				command.Parameters.AddWithValue("$exWeight", after.ExerciseWeight);
+				command.ExecuteNonQuery();
+			}
+
+		}
 	}
 }
