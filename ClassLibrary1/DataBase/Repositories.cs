@@ -25,37 +25,22 @@ namespace WorkoutControlling.DataBase
 		{
 			using var connection = new SqliteConnection($"Data Source={_dbPath}");
 			connection.Open();
-			
+			Console.WriteLine("VERİTABANI BURADA: " + System.IO.Path.GetFullPath(_dbPath));
 			string createExercisesTable = @"CREATE TABLE IF NOT EXISTS Exercises (
 										Id INTEGER PRIMARY KEY AUTOINCREMENT,
+										MemberId INTEGER NOT NULL,
 										Name TEXT NOT NULL,
 										PrimaryMuscle TEXT NOT NULL,
 										SetNumber INTEGER NOT NULL,
-										Repetation INTEGER NOT NULL
+										Repetation INTEGER NOT NULL,
+										ExerciseWeight REAL DEFAULT 0
 									);";
 
 			using var createTableCommand = new SqliteCommand(createExercisesTable, connection);
 			createTableCommand.ExecuteNonQuery();
 		}
 
-		public void EnsureWeightColumnExists()
-		{
-			using var connection = new SqliteConnection($"Data Source={_dbPath}");
-			connection.Open();
-			var command = connection.CreateCommand();
-
-			// Eğer Weight sütunu yoksa ekle komutu
-			command.CommandText = "ALTER TABLE Exercises ADD COLUMN ExerciseWeight REAL DEFAULT 0;";
-
-			try
-			{
-				command.ExecuteNonQuery();
-			}
-			catch
-			{
-
-			}
-		}
+		
 
 		public void Add(WorkoutInfo exercise)
 		{
@@ -66,9 +51,10 @@ namespace WorkoutControlling.DataBase
 
 				var insertCommand = connection.CreateCommand();
 				insertCommand.CommandText =
-					@"INSERT INTO Exercises (Name,PrimaryMuscle,SetNumber,Repetation,ExerciseWeight)
-				VALUES ($name,$muscle,$set,$rep,$exWeight)";
+					@"INSERT INTO Exercises (MemberId,Name,PrimaryMuscle,SetNumber,Repetation,ExerciseWeight)
+				VALUES ($memberId,$name,$muscle,$set,$rep,$exWeight)";
 
+				insertCommand.Parameters.AddWithValue("$memberId", exercise.MemberId);
 				insertCommand.Parameters.AddWithValue("$name", exercise.Name);
 				insertCommand.Parameters.AddWithValue("$muscle", exercise.PrimaryMuscle.ToString());
 				insertCommand.Parameters.AddWithValue("$set", exercise.SetNumber);
@@ -167,7 +153,7 @@ namespace WorkoutControlling.DataBase
 			{
 				connection.Open();
 				var command = connection.CreateCommand();
-				command.CommandText = "SELECT Id, Name, PrimaryMuscle, SetNumber, Repetation, ExerciseWeight FROM Exercises";
+				command.CommandText = "SELECT Id,MemberId, Name, PrimaryMuscle, SetNumber, Repetation, ExerciseWeight FROM Exercises";
 
 				using (var reader = command.ExecuteReader())
 				{
@@ -176,12 +162,13 @@ namespace WorkoutControlling.DataBase
 						var workout = new WorkoutInfo
 						{
 							Id = reader.GetInt32(0),
+							MemberId = reader.GetInt32(1),
 							DisplayId = counter++,
-							Name = reader.GetString(1),
-							PrimaryMuscle = Enum.Parse<MuscleGroup>(reader.GetString(2)),
-							SetNumber = reader.GetInt32(3),
-							RepetationNumber = reader.GetInt32(4),
-							ExerciseWeight = reader.GetInt32(5)
+							Name = reader.GetString(2),
+							PrimaryMuscle = Enum.Parse<MuscleGroup>(reader.GetString(3)),
+							SetNumber = reader.GetInt32(4),
+							RepetationNumber = reader.GetInt32(5),
+							ExerciseWeight = reader.GetInt32(6)
 
 						};
 
@@ -217,7 +204,8 @@ namespace WorkoutControlling.DataBase
 				command.Parameters.AddWithValue("$exWeight", after.ExerciseWeight);
 				command.ExecuteNonQuery();
 			}
-
 		}
+
+
 	}
 }

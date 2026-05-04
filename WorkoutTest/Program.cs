@@ -6,8 +6,6 @@ using WorkoutTest;
 var manager = new WorkoutManager();
 manager.ClearAllWorkouts();
 var repo = new Repositories();
-repo.EnsureWeightColumnExists();
-
 Console.WriteLine("=== WORKOUT SYSTEM INTEGRATION & UNIT TESTS ===");
 Console.WriteLine("----------------------------------------------");
 

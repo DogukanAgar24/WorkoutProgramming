@@ -147,5 +147,19 @@ namespace WorkoutControlling.Business
 
 			return Math.Round(oneRepMax, 2);
 		}
+
+		public void AddWorkoutToMember(Member member,WorkoutInfo workout)
+		{
+			workout.MemberId = member.Id;
+
+			member.WorkoutHistory.Add(workout);
+		}
+
+		public double CalculateStrenght(Member member,WorkoutInfo workout)
+		{
+			double oneRepMax = CalculateOneRepMax(workout);
+
+			return Math.Round(oneRepMax / member.Weight,2);
+		}
 	}
 }

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ClassLibrary1/WorkoutControlling.csproj" />
+  <Project Path="WorkoutProgramUI/WorkoutProgramUI.csproj" Id="50cf79d6-d634-453b-a9e0-47bd3ac29c40" />
   <Project Path="WorkoutTest/WorkoutTest.csproj" Id="a9c7f501-de54-4e6d-8af2-d7e65b61d2f4" />
 </Solution>

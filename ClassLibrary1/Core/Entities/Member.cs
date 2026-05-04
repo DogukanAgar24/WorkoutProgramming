@@ -10,8 +10,11 @@ namespace WorkoutControlling.Core.Entities
 		public string FitnessGoal { get; set; }
 		public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
+		public List<WorkoutInfo> WorkoutHistory { get; set; } = new List<WorkoutInfo>();
+
 		public Member(int id, string fullName, string email, long phoneNumber, 
-			double weight, double height, double fatPercentage, double targetWeight, string fitnessGoal, DateTime registrationDate)
+			double weight, double height, double fatPercentage, double targetWeight,
+			string fitnessGoal, DateTime registrationDate)
 			: base(id, fullName, email, phoneNumber)
 		{
 			Weight = weight;
