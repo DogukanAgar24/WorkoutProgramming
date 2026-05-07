@@ -10,11 +10,11 @@ using WorkoutControlling.Core.Interfaces;
 
 namespace WorkoutControlling.DataBase
 {
-	public class Repositories : IRepository<WorkoutInfo>
+	public class WorkoutRepositories : IWorkoutRepository<WorkoutInfo>
 	{
 		private readonly string _dbPath = "workoutControlling.db";
 
-		public Repositories()
+		public WorkoutRepositories()
 		{
 			InitializeDataBase();
 		}

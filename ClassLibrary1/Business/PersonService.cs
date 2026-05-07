@@ -142,6 +142,8 @@ namespace WorkoutControlling.Business
 		{
 			_members.Sort((m1, m2) => m1.RegistrationDate.CompareTo(m2.RegistrationDate));
 		}
+
+		
 	}
 
 	

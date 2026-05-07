@@ -9,11 +9,11 @@ namespace WorkoutControlling.Business
 {
 	public class WorkoutManager
 	{
-		private readonly Repositories _repository;
+		private readonly WorkoutRepositories _repository;
 
 		public WorkoutManager()
 		{
-			_repository = new Repositories();
+			_repository = new WorkoutRepositories();
 		}
 
 		public BusinessResult AddWorkout(WorkoutInfo info)
